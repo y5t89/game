@@ -10,12 +10,24 @@ def get_winner(player, computer):
     else:
         return "computer"
 
+def get_computer_choice(difficulty, last_player_choice):
+    options = ["rock", "paper", "scissors"]
+    if difficulty == "easy" or last_player_choice is None:
+        return random.choice(options)
+    # Hard mode: counter the player's last move
+    counter = {"rock": "paper", "paper": "scissors", "scissors": "rock"}
+    return counter[last_player_choice]
+
 def play_game():
     options = ["rock", "paper", "scissors"]
     print("🎮 Welcome to Rock, Paper, Scissors!")
     player_name = input("Enter your name: ").strip().title()
-    rounds = input(f"Hi {player_name}, how many rounds would you like to play? ")
 
+    difficulty = input("Choose difficulty (easy/hard): ").lower()
+    while difficulty not in ["easy", "hard"]:
+        difficulty = input("Invalid choice. Choose 'easy' or 'hard': ").lower()
+
+    rounds = input(f"Hi {player_name}, how many rounds would you like to play? ")
     while not rounds.isdigit() or int(rounds) <= 0:
         rounds = input("Please enter a valid positive number: ")
     rounds = int(rounds)
@@ -23,6 +35,7 @@ def play_game():
     player_score = 0
     computer_score = 0
     history = []
+    last_player_choice = None
 
     for round_num in range(1, rounds + 1):
         print(f"\n--- Round {round_num} ---")
@@ -31,10 +44,12 @@ def play_game():
             print("Invalid choice. Try again.")
             continue
 
-        computer = random.choice(options)
-        print(f"{player_name} chose {player}, computer chose {computer}.")
+        computer = get_computer_choice(difficulty, last_player_choice)
+        last_player_choice = player
 
+        print(f"{player_name} chose {player}, computer chose {computer}.")
         winner = get_winner(player, computer)
+
         if winner == "player":
             print(f"✅ {player_name} wins this round!")
             player_score += 1
@@ -70,3 +85,4 @@ def play_game():
 
 if __name__ == "__main__":
     play_game()
+
